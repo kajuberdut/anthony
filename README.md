@@ -28,10 +28,10 @@
 <br />
 <p align="center">
   <a href="https://github.com/kajuberdut/anthony">
-    <img src="https://github.com/kajuberdut/anthony/blob/main/images/icon.svg?raw=true" alt="Logo" width="80" height="80">
+    <img src="https://raw.githubusercontent.com/kajuberdut/anthony/main/images/Icon.svg" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 align="center">A python search engine</h3>
+  <h3 align="center">Anthony: Find it with Python</h3>
 
   <p align="center">
     Tony, Tony, look around, help me find what can’t be found
@@ -55,7 +55,7 @@
         <li><a href="#further-examples">Further Examples</a></li>
       </ul> -->
     </li>
-    <li><a href="#roadmap">Roadmap</a></li>
+    <!-- <li><a href="#roadmap">Roadmap</a></li> -->
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
@@ -79,13 +79,11 @@ Anthony is a document search engine written in Python.
 <!-- GETTING STARTED -->
 ## Getting Started
 
-To get a local copy up and running follow these simple steps.
-
-### Installing with pip
-
-  ```sh
+<!-- To get a local copy up and running follow these simple steps. -->
+<!-- ### Installing with pip -->
+  <!-- ```sh
   pip install anthony
-  ```
+  ``` -->
 
 For information about cloning and dev setup see: [Contributing](#Contributing)
 
@@ -207,7 +205,7 @@ Contributions are what make the open source community such an amazing place to b
 <!-- LICENSE -->
 ## License
 
-Distributed under the BSD Two-clause License. See `LICENSE` for more information.
+Distributed under the UnLicense. See `LICENSE` for more information.
 
 
 
@@ -231,7 +229,7 @@ Project Link: [https://github.com/kajuberdut/anthony](https://github.com/kajuber
 [stars-url]: https://github.com/kajuberdut/anthony/stargazers
 [issues-shield]: https://img.shields.io/github/issues/kajuberdut/anthony.svg?style=for-the-badge
 [issues-url]: https://github.com/kajuberdut/anthony/issues
-[license-shield]: https://img.shields.io/badge/License-BSD%202--Clause-orange.svg?style=for-the-badge
+[license-shield]: https://img.shields.io/badge/License-unlicense-orange.svg?style=for-the-badge
 [license-url]: https://github.com/kajuberdut/anthony/blob/main/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/patrick-shechet
