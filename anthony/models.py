@@ -1,8 +1,6 @@
-from enum import Enum, unique
+from enum import Enum
 
-from dsorm import Column, Database, Pragma, RawSQL, Table, TypeMaster, make_table
-
-TypeMaster.allow_pickle()
+from dsorm import Column, Database, Pragma, RawSQL, Table, make_table
 
 DB_PATH = "anythony.db"
 
@@ -85,7 +83,7 @@ document_words = Table(
         Column.id(),
         Column(column_name="DocumentId", python_type=int, nullable=False),
         Column(column_name="WordId", python_type=int, nullable=False),
-        Column(column_name="StemWordId", python_type=int, nullable=False)
+        Column(column_name="StemWordId", python_type=int, nullable=False),
     ],
     constraints=[
         word_table.fkey("WordId"),
@@ -99,3 +97,8 @@ document_words = Table(
         ),
     ],
 )
+
+
+def init_db():
+    db.initialize()
+    db.execute(word_index)

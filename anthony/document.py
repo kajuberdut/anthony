@@ -4,10 +4,9 @@ from uuid import uuid4
 from dsorm import Column, Comparison
 from dsorm.dsorm import RawSQL
 
+from anthony.models import Column, Table, WordType, db
 from anthony.utility.stemmer import stem
 from anthony.utility.string_functions import tokenize
-from anthony.tables import Column, Table, WordType, db
-
 
 db.c.create_function("_stem", 1, stem, deterministic=True)
 
