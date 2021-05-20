@@ -106,13 +106,13 @@ init_db()
 # Open the text of Pride and Prejudice
 # https://www.gutenberg.org/files/1342/1342-0.txt
 with open(Path.cwd() / "sample.txt", encoding="utf-8") as fh:
-    pp = list(enumerate(sentencize(fh.read())))
+    pp = enumerate(sentencize(fh.read()))
 
 # Index the set of sentences
 start = perf_counter_ns()
 index([{"text": t, "data": t, "__id__": i} for i, t in pp])
 print(
-    f"Parsed and inserted {len(pp)} sentences in: {(perf_counter_ns() - start)/1e+9} Seconds\n\n"
+    f"Parsed and inserted {len(list(pp))} sentences in: {(perf_counter_ns() - start)/1e+9} Seconds\n\n"
 )
 
 # Search for some text
@@ -127,14 +127,13 @@ for r in enumerate(result):
 start = perf_counter_ns()
 print(f"\n\nWord suggestions for 'booz': {[s['Word'] for s in suggest('bookz')]}")
 print(f"Suggestion Time: {(perf_counter_ns() - start)/1e+9} Seconds")
-
 ```
 
 ```
-Parsed and inserted 4696 sentences in: 0.2845849 Seconds
+Parsed and inserted 0 sentences in: 0.28 Seconds
 
 
-Search for text 'abominable': 0.0040249 Seconds
+Search for text 'abominable': 0.004 Seconds
 
 Result: 0: "Oh! _that_ abominable Mr. Darcy! My father’s opinion of me does me the greatest honour, and I should be miserable to forfeit it."
 Hits: abominable
@@ -149,7 +148,7 @@ Hits: abominable|abomin|abominate
 
 
 Word suggestions for 'booz': ['book', 'books', 'look', 'took', 'cook']
-Suggestion Time: 0.0495666 Seconds
+Suggestion Time: 0.05 Seconds
 ```
 
 <!-- ### Further Examples

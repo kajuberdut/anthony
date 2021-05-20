@@ -82,30 +82,35 @@ def index(documents):
         ],
     )
 
-    save_words([words for d in documents for words in d["words"]])
+    save_words([word[1] for d in documents for word in d["words"]])
 
     temp_name = f"temp_doc_words_{str(uuid4())[-12:]}"
     temp_table = Table(
         table_name=temp_name,
         column=[
             Column(column_name="DocIdent", nullable=False),
-            Column(column_name="word", nullable=False),
+            Column(column_name="Word", nullable=False),
+            Column(column_name="WordIndex", python_type=int),
         ],
         temp=True,
     )
 
     temp_table.execute()
     db.c.executemany(
-        f"""INSERT INTO [{temp_name}](DocIdent, word) values (?,?) ON CONFLICT DO NOTHING""",
-        [(d["__id__"], words) for d in documents for words in d["words"]],
+        f"""INSERT INTO [{temp_name}](DocIdent, Word, WordIndex) values (?,?,?) ON CONFLICT DO NOTHING""",
+        [
+            (d["__id__"], word, i)
+            for d in documents
+            for i, word in d["words"]
+        ],
     )
 
     db.c.execute(
-        f""" INSERT INTO document_words(DocumentId, WordId, StemWordId)
-    SELECT DISTINCT d.id, w.id, IFNULL(ws.StemWordId, w.id)
+        f""" INSERT INTO document_words(DocumentId, WordId, StemWordId, WordIndex)
+    SELECT DISTINCT d.id, w.id, IFNULL(ws.StemWordId, w.id), dw.WordIndex
     FROM [{temp_name}] dw
     JOIN document d ON dw.DocIdent = d.DocIdent
-    JOIN word w ON dw.word = w.word
+    JOIN word w ON dw.Word = w.Word
     LEFT JOIN word_stem ws ON w.id = ws.BranchWordId
     WHERE true
     ON CONFLICT DO NOTHING;
@@ -128,12 +133,12 @@ def search(text, limit=10):
 	FROM word w 
 	LEFT JOIN word_stem ws ON w.id = ws.BranchWordId
 	LEFT JOIN word s ON ws.StemWordId = s.id
-	WHERE ({Comparison.is_in("w.Word", tokenize(text)).sql()})
+	WHERE ({Comparison.is_in("w.Word", [w for i, w in tokenize(text)]).sql()})
 )
 SELECT d.DocIdent
 	 , d.Data 
 	 , COUNT(*) HitCount
-	 , group_concat( DISTINCT CASE 
+	 , group_concat( CASE 
 						WHEN WordPath = w.Word 
 							THEN WordPath
 						WHEN sw.WordId = dw.WordId
@@ -141,6 +146,7 @@ SELECT d.DocIdent
 						ELSE WordPath || '|' || w.Word 
 					 END
 					) Hits
+     , group_concat(WordIndex) HitIndexes
 FROM search_words sw
 JOIN document_words dw ON sw.StemWordId = dw.StemWordId
 JOIN document d ON dw.DocumentId = d.id

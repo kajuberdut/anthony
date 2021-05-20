@@ -11,13 +11,13 @@ init_db()
 # Open the text of Pride and Prejudice
 # https://www.gutenberg.org/files/1342/1342-0.txt
 with open(Path.cwd() / "sample.txt", encoding="utf-8") as fh:
-    pp = list(enumerate(sentencize(fh.read())))
+    pp = enumerate(sentencize(fh.read()))
 
 # Index the set of sentences
 start = perf_counter_ns()
 index([{"text": t, "data": t, "__id__": i} for i, t in pp])
 print(
-    f"Parsed and inserted {len(pp)} sentences in: {(perf_counter_ns() - start)/1e+9} Seconds\n\n"
+    f"Parsed and inserted {len(list(pp))} sentences in: {(perf_counter_ns() - start)/1e+9} Seconds\n\n"
 )
 
 # Search for some text
@@ -26,7 +26,10 @@ start = perf_counter_ns()
 result = search(search_text, limit=5)
 print(f"Search for text '{search_text}': {(perf_counter_ns() - start)/1e+9} Seconds\n")
 for r in enumerate(result):
-    print(f"""Result: {r[0]}: "{r[1]["Data"]}" """ f"""\nHits: {r[1]["Hits"]}""")
+    print(
+        f"""Result: {r[0]}: "{r[1]["Data"]}" """
+        f"""\n\tHits: {" ".join([f"{h[0]}({h[1]})" for h in zip(r[1]["Hits"].split(","), r[1]["HitIndexes"].split(","))])}"""
+    )
 
 # Suggest alternatives for a word
 start = perf_counter_ns()

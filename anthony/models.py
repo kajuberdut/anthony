@@ -84,11 +84,12 @@ document_words = Table(
         Column(column_name="DocumentId", python_type=int, nullable=False),
         Column(column_name="WordId", python_type=int, nullable=False),
         Column(column_name="StemWordId", python_type=int, nullable=False),
+        Column(column_name="WordIndex", python_type=int)
     ],
     constraints=[
         word_table.fkey("WordId"),
         word_table.fkey("StemWordId"),
-        RawSQL("UNIQUE(DocumentId, WordId)"),
+        RawSQL("UNIQUE(DocumentId, WordId, WordIndex)"),
         RawSQL(
             """CONSTRAINT fk_Document_Word
     FOREIGN KEY (DocumentId)

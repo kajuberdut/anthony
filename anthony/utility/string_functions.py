@@ -1,6 +1,5 @@
 import re
-
-
+from typing import Tuple
 
 TOKEN_END = re.compile(r"[^\da-z]")
 SENTENCE_END = re.compile(r"(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s")
@@ -20,15 +19,15 @@ STOP_WORDS = frozenset(
     """.split()
 )
 
+
 def sentencize(text):
     text = re.sub(GREEDY_WHITESPACE, " ", text)
     return [s.strip() for s in re.split(SENTENCE_END, text) if len(s) > 3]
 
 
-def tokenize(text):
+def tokenize(text: str) -> Tuple[int, str]:
     return [
-        w
-        for w in re.split(TOKEN_END, text.lower())
+        (i, w)
+        for i, w in enumerate(re.split(TOKEN_END, text.lower()))
         if w not in STOP_WORDS and len(w) > 1
     ]
-
