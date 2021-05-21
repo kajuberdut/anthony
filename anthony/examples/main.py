@@ -33,5 +33,6 @@ for r in enumerate(result):
 
 # Suggest alternatives for a word
 start = perf_counter_ns()
-print(f"\n\nWord suggestions for 'booz': {[s['Word'] for s in suggest('bookz')]}")
+search_term = 'bingly'
+print(f"\n\nWord suggestions for '{search_term}': {[s['Word'] for s in suggest(search_term, limit=3)]}")
 print(f"Suggestion Time: {(perf_counter_ns() - start)/1e+9} Seconds")

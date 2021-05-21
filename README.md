@@ -28,10 +28,10 @@
 <br />
 <p align="center">
   <a href="https://github.com/kajuberdut/anthony">
-    <img src="https://raw.githubusercontent.com/kajuberdut/anthony/main/images/Icon.svg" alt="Logo" width="80" height="80">
+    <img src="https://raw.githubusercontent.com/kajuberdut/anthony/main/images/Icon.svg" alt="Logo" width="160" height="160">
   </a>
 
-  <h3 align="center">Anthony: Find it with Python</h3>
+  <h2 align="center">Anthony: Find it with Python</h2>
 
   <p align="center">
     Tony, Tony, look around, help me find what can’t be found
@@ -121,34 +121,39 @@ start = perf_counter_ns()
 result = search(search_text, limit=5)
 print(f"Search for text '{search_text}': {(perf_counter_ns() - start)/1e+9} Seconds\n")
 for r in enumerate(result):
-    print(f"""Result: {r[0]}: "{r[1]["Data"]}" """ f"""\nHits: {r[1]["Hits"]}""")
+    print(
+        f"""Result: {r[0]}: "{r[1]["Data"]}" """
+        f"""\n\tHits: {" ".join([f"{h[0]}({h[1]})" for h in zip(r[1]["Hits"].split(","), r[1]["HitIndexes"].split(","))])}"""
+    )
 
 # Suggest alternatives for a word
 start = perf_counter_ns()
-print(f"\n\nWord suggestions for 'booz': {[s['Word'] for s in suggest('bookz')]}")
+search_term = 'bingly'
+print(f"\n\nWord suggestions for '{search_term}': {[s['Word'] for s in suggest(search_term, limit=3)]}")
 print(f"Suggestion Time: {(perf_counter_ns() - start)/1e+9} Seconds")
-```
 
 ```
-Parsed and inserted 0 sentences in: 0.28 Seconds
+
+```
+Parsed and inserted 0 sentences in: 0.3 Seconds
 
 
-Search for text 'abominable': 0.004 Seconds
+Search for text 'abominable': 0.02 Seconds
 
-Result: 0: "Oh! _that_ abominable Mr. Darcy! My father’s opinion of me does me the greatest honour, and I should be miserable to forfeit it."
-Hits: abominable
-Result: 1: "Who would have thought that she could be so thin and small?” “She is abominably rude to keep Charlotte out of doors in all this wind."
-Hits: abominable|abomin|abominably
-Result: 2: "But his pride, his abominable pride—his shameless avowal of what he had done with respect to Jane—his unpardonable assurance in acknowledging, though he could not justify it, and the unfeeling manner in which he had mentioned Mr. Wickham, his cruelty towards whom he had not attempted to deny, soon overcame the pity which the consideration of his attachment had for a moment excited."
-Hits: abominable
-Result: 3: "It seems to me to show an abominable sort of conceited independence, a most country-town indifference to decorum.” “It shows an affection for her sister that is very pleasing,” said Bingley."
-Hits: abominable
+Result: 0: "Oh! _that_ abominable Mr. Darcy! My father’s opinion of me does me the greatest honour, and I should be miserable to forfeit it." 
+        Hits: abominable(5)
+Result: 1: "Who would have thought that she could be so thin and small?” “She is abominably rude to keep Charlotte out of doors in all this wind." 
+        Hits: abominable|abomin|abominably(17)
+Result: 2: "But his pride, his abominable pride—his shameless avowal of what he had done with respect to Jane—his unpardonable assurance in acknowledging, though he could not justify it, and the unfeeling manner in which he had mentioned Mr. Wickham, his cruelty towards whom he had not attempted to deny, soon overcame the pity which the consideration of his attachment had for a moment excited." 
+        Hits: abominable(5)
+Result: 3: "It seems to me to show an abominable sort of conceited independence, a most country-town indifference to decorum.” “It shows an affection for her sister that is very pleasing,” said Bingley." 
+        Hits: abominable(7)
 Result: 4: "The vague and unsettled suspicions which uncertainty had produced of what Mr. Darcy might have been doing to forward her sister’s match, which she had feared to encourage as an exertion of goodness too great to be probable, and at the same time dreaded to be just, from the pain of obligation, were proved beyond their greatest extent to be true! He had followed them purposely to town, he had taken on himself all the trouble and mortification attendant on such a research; in which supplication had been necessary to a woman whom he must abominate and despise, and where he was reduced to meet, frequently meet, reason with, persuade, and finally bribe, the man whom he always most wished to avoid, and whose very name it was punishment to him to pronounce."
-Hits: abominable|abomin|abominate
+        Hits: abominable|abomin|abominate(104)
 
 
-Word suggestions for 'booz': ['book', 'books', 'look', 'took', 'cook']
-Suggestion Time: 0.05 Seconds
+Word suggestions for 'bingly': ['bingley', 'single', 'kindly']
+Suggestion Time: 0.06 Seconds
 ```
 
 <!-- ### Further Examples
