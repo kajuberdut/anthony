@@ -116,25 +116,16 @@ def index(documents):
 
 
 def parse_hits(hit):
-    return [
-        dict(zip(["SearchWord", "Stem", "FoundWord", "WordIndex"], h.split("|")))
-        for h in hit.split(",")
-    ]
+    if hit is not None:
+        return [
+            dict(zip(["SearchWord", "Stem", "FoundWord", "WordIndex"], h.split("|")))
+            for h in hit.split(",")
+        ]
 
 
-def search(text, limit=10, suggestions=False):
-    words = [w for _, w in tokenize(text)]
-    return {
-        "DidYouMean": replacer(
-            text, {word: "".join(suggest(word, limit=1)) for word in words}
-        )
-        if suggestions is True
-        else None,
-        "Results": [
-            {**r, **{"Hits": parse_hits(r["Hits"])}}
-            for r in db.execute(
-                f"""WITH search_words AS (
-	SELECT w.Word || '|' || s.Word WordPath
+def search_query(words, limit):
+    return f"""WITH search_words AS (
+	SELECT w.Word || '|' || IFNULL(s.Word, '') WordPath
 		 , IFNULL(ws.StemWordId, w.id) StemWordId
 		 , w.id WordId
 	FROM word w 
@@ -144,7 +135,7 @@ def search(text, limit=10, suggestions=False):
 )
 SELECT d.id __id__
 	 , d.Data 
-	 , COUNT(*) HitCount
+	 , COUNT(DISTINCT WordPath) HitCount
 	 , group_concat(WordPath || '|' || w.Word || '|' || WordIndex) Hits
 FROM search_words sw
 JOIN document_words dw ON sw.StemWordId = dw.StemWordId
@@ -153,9 +144,30 @@ LEFT JOIN word w ON dw.WordId = w.id
 GROUP BY d.DocIdent, d.Data
 ORDER BY HitCount DESC
 LIMIT {limit}"""
-            )
-        ],
+
+
+def search(text, limit=10, suggestions=False, debug=False):
+    words = [w for _, w in tokenize(text)]
+    sql = search_query(words, limit)
+    result = {
+        "Results": [{**r, **{"Hits": parse_hits(r["Hits"])}} for r in db.execute(sql)],
     }
-
-
-# python -m nuitka --module document.py
+    DidYouMean = (
+        replacer(
+            text,
+            {
+                word: "".join(
+                    suggest(
+                        word, limit=1, affinity=[r["__id__"] for r in result["Results"]]
+                    )
+                )
+                for word in words
+            },
+        )
+        if suggestions is True
+        else None
+    )
+    result["DidYouMean"] = DidYouMean if DidYouMean != text else None
+    if debug:
+        result["Query"] = sql
+    return result

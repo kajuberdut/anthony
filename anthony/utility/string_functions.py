@@ -11,7 +11,7 @@ import re
 import typing as t
 
 TOKEN_END = re.compile(r"[^\da-z]")
-SENTENCE_END = re.compile(r"(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)\s")
+SENTENCE_END = re.compile(r"(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?|\!)\s")
 GREEDY_WHITESPACE = re.compile(r"\s+")
 r_exp = re.compile(r"[^aeiouy]*[aeiouy]+[^aeiouy](\w*)")
 ewss_exp1 = re.compile(r"^[aeiouy][^aeiouy]$")
@@ -51,9 +51,10 @@ def replacer(text: str, replacements: t.Dict[str, str], reverse=False) -> str:
 def highlight(
     hits, text, left_tag="<mark>", right_tag="</mark>", target_key="FoundWord"
 ):
-    return replacer(
-        text, {h[target_key]: f"{left_tag}{h[target_key]}{right_tag}" for h in hits}
-    )
+    if hits is not None:
+        return replacer(
+            text, {h[target_key]: f"{left_tag}{h[target_key]}{right_tag}" for h in hits}
+        )
 
 
 def sentencize(text):
@@ -395,5 +396,3 @@ def stem(word):
     word = normalize_ys(word)
 
     return word
-
-    # python -m nuitka --module string_functions.py

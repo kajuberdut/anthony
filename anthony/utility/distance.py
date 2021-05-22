@@ -91,5 +91,3 @@ def compare_info(s1, s2):
         result["scores"]["total score"] / result["weights"]["total weight"]
     )
     return result
-
-# python -m nuitka --module distance.py

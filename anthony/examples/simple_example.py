@@ -15,7 +15,8 @@ index([{"text": t, "data": t} for t in pp])
 
 
 # Search for some text
-s = search("probably despise abominable bingly", limit=1, suggestions=True)
-print(f'Did You Mean: "{s["DidYouMean"]}"?')
+s = search("disengaged aarm darcy", limit=1, suggestions=True)
 hits, text = s["Results"][0]["Hits"], s["Results"][0]["Data"]
 print(highlight(hits, text, left_tag="__", right_tag="__"))
+
+print(f'Did You Mean: "{s["DidYouMean"]}"?')
