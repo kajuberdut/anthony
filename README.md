@@ -106,9 +106,9 @@ hits, text = s["Results"][0]["Hits"], s["Results"][0]["Data"]
 print(highlight(hits, text))
 ```  
 #### Result:
-> The vague and unsettled suspicions which uncertainty had produced of what Mr. Darcy might have been doing to forward her sister’s match, which she had feared to encourage as an exertion of goodness too great to be <mark>probable</mark>, and at the same time dreaded to be just, from the pain of obligation, were proved beyond their greatest extent to be true! He had followed them purposely to town, he had taken on himself all the trouble and mortification attendant on such a research; in which supplication had been necessary to a woman whom he must <mark>abominate</mark> and <mark>despise</mark>, and where he was reduced to meet, frequently meet, reason with, persuade, and finally bribe, the man whom he always most wished to avoid, and whose very name it was punishment to him to pronounce.
+> The vague and unsettled suspicions which uncertainty had produced of what Mr. Darcy might have been doing to forward her sister’s match, which she had feared to encourage as an exertion of goodness too great to be __probable__, and at the same time dreaded to be just, from the pain of obligation, were proved beyond their greatest extent to be true! He had followed them purposely to town, he had taken on himself all the trouble and mortification attendant on such a research; in which supplication had been necessary to a woman whom he must __abominate__ and __despise__, and where he was reduced to meet, frequently meet, reason with, persuade, and finally bribe, the man whom he always most wished to avoid, and whose very name it was punishment to him to pronounce.
 
-Highlight is an easy way to wrap formatting around each of the searched word within the document in some html which causes those words to be highlighted.
+Highlight is an easy way to wrap formatting around each of the searched word within the document. Here we wrap __ to get bold in markdown.
 
 #### Suggestions
 ```python
