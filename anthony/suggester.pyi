@@ -10,7 +10,8 @@
 # when you make software releases of the extension module that it
 # describes.
 
-import re
+import anthony.utility.distance
+import anthony.models
 
 # This is not Python source even if it looks so. Make it clear for
 # now. This was decided by PEP 484 designers.

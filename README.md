@@ -72,8 +72,8 @@ Anthony is a document search engine written in Python.
 
 ### Features
 * Document indexing
-* Search
-* Word suggestion
+* Document search
+* Text suggestions
 
 
 <!-- GETTING STARTED -->
@@ -90,71 +90,36 @@ For information about cloning and dev setup see: [Contributing](#Contributing)
 
 <!-- USAGE EXAMPLES -->
 ## Usage
-Here is an example showing basic usage.
+The following code snippets show basic usage. They assume a variable pp has been created and points to a sequence of sentences of the text of Pride and Prejudice.  
+For full code, including the imports needed see [simple_example.py](https://github.com/kajuberdut/anthony/blob/main/examples/simple_example.py)
 
+### Index
+Indexing a document adds it to or updates it in the search store.
 ```python
-from pathlib import Path
-from time import perf_counter_ns
-
-from anthony.document import index, search
-from anthony.models import init_db
-from anthony.suggester import suggest
-from anthony.utility.string_functions import sentencize
-
-init_db()
-
-# Open the text of Pride and Prejudice
-# https://www.gutenberg.org/files/1342/1342-0.txt
-with open(Path.cwd() / "sample.txt", encoding="utf-8") as fh:
-    pp = enumerate(sentencize(fh.read()))
-
-# Index the set of sentences
-start = perf_counter_ns()
-index([{"text": t, "data": t, "__id__": i} for i, t in pp])
-print(
-    f"Parsed and inserted {len(list(pp))} sentences in: {(perf_counter_ns() - start)/1e+9} Seconds\n\n"
-)
-
-# Search for some text
-search_text = "abominable"
-start = perf_counter_ns()
-result = search(search_text, limit=5)
-print(f"Search for text '{search_text}': {(perf_counter_ns() - start)/1e+9} Seconds\n")
-for r in enumerate(result):
-    print(
-        f"""Result: {r[0]}: "{r[1]["Data"]}" """
-        f"""\n\tHits: {" ".join([f"{h[0]}({h[1]})" for h in zip(r[1]["Hits"].split(","), r[1]["HitIndexes"].split(","))])}"""
-    )
-
-# Suggest alternatives for a word
-start = perf_counter_ns()
-search_term = 'bingly'
-print(f"\n\nWord suggestions for '{search_term}': {[s['Word'] for s in suggest(search_term, limit=3)]}")
-print(f"Suggestion Time: {(perf_counter_ns() - start)/1e+9} Seconds")
-
+index([{"text": t, "data": t} for t in pp])
 ```
 
+### Search
+```python
+s = search("probably despise abominable bingly", limit=1, suggestions=True)
+hits, text = s["Results"][0]["Hits"], s["Results"][0]["Data"]
+print(highlight(hits, text))
+```  
+#### Result:
+> The vague and unsettled suspicions which uncertainty had produced of what Mr. Darcy might have been doing to forward her sister’s match, which she had feared to encourage as an exertion of goodness too great to be <mark>probable</mark>, and at the same time dreaded to be just, from the pain of obligation, were proved beyond their greatest extent to be true! He had followed them purposely to town, he had taken on himself all the trouble and mortification attendant on such a research; in which supplication had been necessary to a woman whom he must <mark>abominate</mark> and <mark>despise</mark>, and where he was reduced to meet, frequently meet, reason with, persuade, and finally bribe, the man whom he always most wished to avoid, and whose very name it was punishment to him to pronounce.
+
+Highlight is an easy way to wrap formatting around each of the searched word within the document in some html which causes those words to be highlighted.
+
+#### Suggestions
+```python
+print(f'Did You Mean: "{s["DidYouMean"]}"?')
 ```
-Parsed and inserted 0 sentences in: 0.3 Seconds
+
+    > Did You Mean: "probably despise abominable bingley"?  
+
+Since we passed "suggestions=True" we get back this suggestion which corrects "bingly" to "bingley".  
 
 
-Search for text 'abominable': 0.02 Seconds
-
-Result: 0: "Oh! _that_ abominable Mr. Darcy! My father’s opinion of me does me the greatest honour, and I should be miserable to forfeit it." 
-        Hits: abominable(5)
-Result: 1: "Who would have thought that she could be so thin and small?” “She is abominably rude to keep Charlotte out of doors in all this wind." 
-        Hits: abominable|abomin|abominably(17)
-Result: 2: "But his pride, his abominable pride—his shameless avowal of what he had done with respect to Jane—his unpardonable assurance in acknowledging, though he could not justify it, and the unfeeling manner in which he had mentioned Mr. Wickham, his cruelty towards whom he had not attempted to deny, soon overcame the pity which the consideration of his attachment had for a moment excited." 
-        Hits: abominable(5)
-Result: 3: "It seems to me to show an abominable sort of conceited independence, a most country-town indifference to decorum.” “It shows an affection for her sister that is very pleasing,” said Bingley." 
-        Hits: abominable(7)
-Result: 4: "The vague and unsettled suspicions which uncertainty had produced of what Mr. Darcy might have been doing to forward her sister’s match, which she had feared to encourage as an exertion of goodness too great to be probable, and at the same time dreaded to be just, from the pain of obligation, were proved beyond their greatest extent to be true! He had followed them purposely to town, he had taken on himself all the trouble and mortification attendant on such a research; in which supplication had been necessary to a woman whom he must abominate and despise, and where he was reduced to meet, frequently meet, reason with, persuade, and finally bribe, the man whom he always most wished to avoid, and whose very name it was punishment to him to pronounce."
-        Hits: abominable|abomin|abominate(104)
-
-
-Word suggestions for 'bingly': ['bingley', 'single', 'kindly']
-Suggestion Time: 0.06 Seconds
-```
 
 <!-- ### Further Examples
 * [A Practical Example](https://github.com/kajuberdut/anthony/blob/main/examples/PracticalExample.py)
@@ -173,12 +138,10 @@ Needed features:
 * Grouping/Aggregates
 * Order/Limit/Offset -->
 
-See the [open issues](https://github.com/kajuberdut/anthony/issues) for a list of proposed features (and known issues).
-
-
 
 <!-- CONTRIBUTING -->
 ## Contributing
+See the [open issues](https://github.com/kajuberdut/anthony/issues) for a list of proposed features (and known issues).
 
 Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 

@@ -1,12 +1,12 @@
+from ast import parse
 from hashlib import md5
 from uuid import uuid4
 
-from dsorm import Column, Comparison
-from dsorm.dsorm import RawSQL
+from dsorm import Column, Comparison, RawSQL
 
 from anthony.models import Column, Table, WordType, db
-from anthony.utility.stemmer import stem
-from anthony.utility.string_functions import tokenize
+from anthony.suggester import suggest
+from anthony.utility.string_functions import replacer, stem, tokenize
 
 db.c.create_function("_stem", 1, stem, deterministic=True)
 
@@ -98,11 +98,7 @@ def index(documents):
     temp_table.execute()
     db.c.executemany(
         f"""INSERT INTO [{temp_name}](DocIdent, Word, WordIndex) values (?,?,?) ON CONFLICT DO NOTHING""",
-        [
-            (d["__id__"], word, i)
-            for d in documents
-            for i, word in d["words"]
-        ],
+        [(d["__id__"], word, i) for d in documents for i, word in d["words"]],
     )
 
     db.c.execute(
@@ -119,34 +115,37 @@ def index(documents):
     temp_table.drop().execute()
 
 
-def search(text, limit=10):
-    return db.execute(
-        f"""WITH search_words AS (
-	SELECT CASE 
-				WHEN w.WordType = 1
-					THEN w.Word
-				ELSE
-					w.Word || '|' || s.Word
-			END WordPath
+def parse_hits(hit):
+    return [
+        dict(zip(["SearchWord", "Stem", "FoundWord", "WordIndex"], h.split("|")))
+        for h in hit.split(",")
+    ]
+
+
+def search(text, limit=10, suggestions=False):
+    words = [w for _, w in tokenize(text)]
+    return {
+        "DidYouMean": replacer(
+            text, {word: "".join(suggest(word, limit=1)) for word in words}
+        )
+        if suggestions is True
+        else None,
+        "Results": [
+            {**r, **{"Hits": parse_hits(r["Hits"])}}
+            for r in db.execute(
+                f"""WITH search_words AS (
+	SELECT w.Word || '|' || s.Word WordPath
 		 , IFNULL(ws.StemWordId, w.id) StemWordId
 		 , w.id WordId
 	FROM word w 
 	LEFT JOIN word_stem ws ON w.id = ws.BranchWordId
 	LEFT JOIN word s ON ws.StemWordId = s.id
-	WHERE ({Comparison.is_in("w.Word", [w for i, w in tokenize(text)]).sql()})
+	WHERE ({Comparison.is_in("w.Word", words).sql()})
 )
-SELECT d.DocIdent
+SELECT d.id __id__
 	 , d.Data 
 	 , COUNT(*) HitCount
-	 , group_concat( CASE 
-						WHEN WordPath = w.Word 
-							THEN WordPath
-						WHEN sw.WordId = dw.WordId
-							THEN w.Word
-						ELSE WordPath || '|' || w.Word 
-					 END
-					) Hits
-     , group_concat(WordIndex) HitIndexes
+	 , group_concat(WordPath || '|' || w.Word || '|' || WordIndex) Hits
 FROM search_words sw
 JOIN document_words dw ON sw.StemWordId = dw.StemWordId
 JOIN document d ON dw.DocumentId = d.id
@@ -154,7 +153,9 @@ LEFT JOIN word w ON dw.WordId = w.id
 GROUP BY d.DocIdent, d.Data
 ORDER BY HitCount DESC
 LIMIT {limit}"""
-    )
+            )
+        ],
+    }
 
 
 # python -m nuitka --module document.py

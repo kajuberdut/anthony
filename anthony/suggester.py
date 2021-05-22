@@ -15,5 +15,9 @@ def suggest(word, limit=5):
          """,
         (word,),
     )
-    return result
+    if len(result) > 0:
+        return [r["Word"] for r in result]
+    else:
+        return None
 
+# python -m nuitka --module suggester.py

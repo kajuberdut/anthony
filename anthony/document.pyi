@@ -13,10 +13,10 @@
 import dsorm
 import uuid
 import hashlib
-import anthony.utility.stemmer
 import anthony.utility.string_functions
 import anthony.models
-import dsorm.dsorm
+import anthony.suggester
+import ast
 
 # This is not Python source even if it looks so. Make it clear for
 # now. This was decided by PEP 484 designers.
