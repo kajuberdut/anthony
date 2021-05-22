@@ -91,7 +91,7 @@ For information about cloning and dev setup see: [Contributing](#Contributing)
 <!-- USAGE EXAMPLES -->
 ## Usage
 The following code snippets show basic usage. They assume a variable pp has been created and points to a sequence of sentences of the text of Pride and Prejudice.  
-For full code, including the imports needed see [simple_example.py](https://github.com/kajuberdut/anthony/blob/main/examples/simple_example.py)
+For full code, including the imports needed see [simple_example.py](https://github.com/kajuberdut/anthony/blob/main/anthony/examples/simple_example.py)
 
 ### Index
 Indexing a document adds it to or updates it in the search store.
