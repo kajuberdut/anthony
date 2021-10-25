@@ -67,7 +67,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-Anthony is a document search engine written in Python.
+Anthony is a document search engine written in Python. The libraries name is taken from St. Anthony of Padua, who is known as the patron saint of finding lost items.
 
 
 ### Features
